@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="4">
+
+    <TextView
+    android:id="@+id/tv_cartProdname"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="2.5"
+    android:text="Product Name" />
+
+    <TextView
+        android:id="@+id/tv_cartPrize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="Prize" />
+
+    <Button
+        android:id="@+id/bt_cartIncrement"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.3"
+        android:text="+" />
+
+    <TextView
+        android:id="@+id/tv_cartQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:hint="  Qty"
+        android:text="" />
+
+    <Button
+        android:id="@+id/bt_cartDecrement"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.3"
+        android:text="-" />
+
+    <Button
+        android:id="@+id/bt_cartDelete"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.3"
+        android:text="d" />
+
+</LinearLayout>
