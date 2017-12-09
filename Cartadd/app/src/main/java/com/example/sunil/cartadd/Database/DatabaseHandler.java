@@ -182,7 +182,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return addCheck;
     }
 
-    public Cursor addButtonStatus(int productid, int useridSP){
+    public Cursor addButtonStatus(/*int productid, int useridSP*/) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -190,12 +190,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + " ON " + TABLE_NAME_CART + "." + COL_CART_PRODID + " = " + TABLE_NAME_PROD + "." + COL_PROD_ID
                 + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";*/
 
-        String leftOuterQuery="SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN " + TABLE_NAME_CART
-                + " ON " + TABLE_NAME_PROD + "." + COL_PROD_ID + " = " + TABLE_NAME_CART + "." + COL_CART_PRODID
-                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";
+        String leftOuterQuery = "SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN " + TABLE_NAME_CART
+                + " ON " + TABLE_NAME_PROD + "." + COL_PROD_ID + " = " + TABLE_NAME_CART + "." + COL_CART_PRODID;
+//                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";
 
-        Cursor result=db.rawQuery(leftOuterQuery, new String[]{String.valueOf(productid), String.valueOf(useridSP)});
+        Cursor result = db.rawQuery(leftOuterQuery, null /*new String[]{String.valueOf(productid), String.valueOf(useridSP)}*/);
 
+        //   Log.d(tag, "" +);
         return result;
 
     }
@@ -310,11 +311,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             cur.moveToFirst();
             do {
-                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
-                mlist.add(new ProductModel(productid,prodname,prodprice));
+                mlist.add(new ProductModel(productid, prodname, prodprice));
             } while (cur.moveToNext());
         }
         return mlist;
@@ -324,7 +325,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         Cursor cur = getAllCartData();
 
-        CartModel cmd=new CartModel();
+        CartModel cmd = new CartModel();
         ProductModel pmd;
         ArrayList<CartModel> cartlist = new ArrayList<>();
 
@@ -334,7 +335,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String cartProdname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int cartProdprize = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
                 int cartItemQty = cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY));
-                int cartid=cur.getInt(cur.getColumnIndex(COL_CART_ID));
+                int cartid = cur.getInt(cur.getColumnIndex(COL_CART_ID));
                 /*cmd.setCartquantity(cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY)));
 
                 pmd.setProdname(cur.getString(cur.getColumnIndex(COL_PROD_NAME)));
@@ -342,43 +343,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 cartlist.add(cmd);*/
 
-                Log.d(tag, cartProdname);
+                //    Log.d(tag, cartProdname);
 
                 pmd = new ProductModel(cartProdname, cartProdprize);
-                cartlist.add(new CartModel(pmd,cartItemQty,cartid));
+                cartlist.add(new CartModel(pmd, cartItemQty, cartid));
             }
         }
         return cartlist;
     }
 
 
-    public int getCartTotalPrice(){
+    public int getCartTotalPrice() {
 
         Cursor cur = getAllCartData();
 
-        int getTotalPrice=0;
-        if(cur!=null){
+        int getTotalPrice = 0;
+        if (cur != null) {
             while (cur.moveToNext()) {
 
                 int cartProdprize = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
                 int cartItemQty = cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY));
 
-                getTotalPrice= cartProdprize*cartItemQty + getTotalPrice;
+                getTotalPrice = cartProdprize * cartItemQty + getTotalPrice;
             }
         }
 
         return getTotalPrice;
     }
 
-    public int cartCount(int userId){
-        int count=0;
-        SQLiteDatabase db=this.getReadableDatabase();
+    public int cartCount(int userId) {
+        int count = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
 
-        String queryCount="SELECT "+ COL_CART_ID + " FROM " + TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " =" +userId;
+        String queryCount = "SELECT " + COL_CART_ID + " FROM " + TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " =" + userId;
 
-        Cursor cur=db.rawQuery(queryCount,null);
+        Cursor cur = db.rawQuery(queryCount, null);
 
-            count=cur.getCount();
+        count = cur.getCount();
 
         return count;
     }
@@ -387,11 +388,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //              -----------------------------------*-*-*-----------------------------------
 
 
-
     public Cursor getAllelecdProductData() {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'ELECTRONICS'",null);
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'ELECTRONICS'", null);
 
         return cur;
 
@@ -407,11 +407,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             cur.moveToFirst();
             do {
-                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
-                mlist.add(new ProductModel(productid,prodname,prodprice));
+                mlist.add(new ProductModel(productid, prodname, prodprice));
             } while (cur.moveToNext());
         }
         return mlist;
@@ -421,7 +421,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Cursor getAllgroceryProductData() {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'GROCERY'",null);
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'GROCERY'", null);
 
         return cur;
     }
@@ -437,11 +437,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             cur.moveToFirst();
             do {
-                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
-                mlist.add(new ProductModel(productid,prodname,prodprice));
+                mlist.add(new ProductModel(productid, prodname, prodprice));
             } while (cur.moveToNext());
         }
         return mlist;
@@ -451,7 +451,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Cursor getAllsportsProductData() {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'SPORTS'",null);
+        //Cursor cur2 = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " left join " + TABLE_NAME_CART
+                + " ON " + COL_CART_PRODID + " = " + COL_PROD_ID + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
+
 
         return cur;
     }
@@ -467,11 +470,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             cur.moveToFirst();
             do {
-                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
-                mlist.add(new ProductModel(productid,prodname,prodprice));
+                String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
+                boolean b=false;
+                if (checkAdded==null)
+                    b=false;
+                else
+                    b=true;
+
+
+                mlist.add(new ProductModel(productid, prodname, prodprice,b));
             } while (cur.moveToNext());
         }
         return mlist;

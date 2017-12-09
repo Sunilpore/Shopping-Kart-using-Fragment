@@ -99,22 +99,6 @@ public class MyAdapter extends BaseAdapter{
         final int useridSP=sp.getInt(UserIDK,1);
         final int productid=current.getPid();
 
-        Cursor cur=db.addButtonStatus(productid,useridSP);
-        if(cur!=null){
-
-            while(cur.moveToFirst()){
-
-                int cartid=0;
-                cartid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_ID));
-                if(cartid!=0)
-                {
-               //     vh.click.setEnabled(false);
-                }
-
-            }
-        }
-
-
         //It is neccessary else it will select multiple buttons
         if(current.isClickbutton()){
             vh.click.setEnabled(false);
@@ -147,7 +131,6 @@ public class MyAdapter extends BaseAdapter{
                 boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
                 if(cartInserted){
                     tmp.setClickbutton(true);
-
                 }
 
                 notifyDataSetChanged();
@@ -156,6 +139,31 @@ public class MyAdapter extends BaseAdapter{
 
             }
         });
+
+
+        /*Cursor cur=db.addButtonStatus(*//*productid,useridSP*//*);
+
+        if(cur!=null){
+
+            while(cur.moveToNext()){
+
+                ProductModel pd=new ProductModel();
+
+                int cartid,prodid=0;
+                cartid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_ID));
+                prodid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_PRODID));
+
+                ProductModel position= (ProductModel) getItem(prodid);
+
+                *//*if(cartid!=0)
+                {
+                    Log.d("myTag2","Cartid:"+prodid);
+                    position.setClickbutton(true);
+                }*//*
+
+            }
+        }*/
+
 
         return view;
     }
