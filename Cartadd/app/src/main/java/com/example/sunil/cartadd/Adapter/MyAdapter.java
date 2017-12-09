@@ -2,6 +2,7 @@ package com.example.sunil.cartadd.Adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,6 +96,25 @@ public class MyAdapter extends BaseAdapter{
 
         vh.click.setTag(current);
 
+        final int useridSP=sp.getInt(UserIDK,1);
+        final int productid=current.getPid();
+
+        Cursor cur=db.addButtonStatus(productid,useridSP);
+        if(cur!=null){
+
+            while(cur.moveToFirst()){
+
+                int cartid=0;
+                cartid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_ID));
+                if(cartid!=0)
+                {
+               //     vh.click.setEnabled(false);
+                }
+
+            }
+        }
+
+
         //It is neccessary else it will select multiple buttons
         if(current.isClickbutton()){
             vh.click.setEnabled(false);
@@ -114,21 +134,20 @@ public class MyAdapter extends BaseAdapter{
                 UserModel umd=new UserModel();
                 ProductModel pmd=new ProductModel();
 
-                int useridSP=sp.getInt(UserIDK,1);
+                //int useridSP=sp.getInt(UserIDK,1);
                 Log.d("myTag","Productid:"+current.getPid());
 
-                /*Toast.makeText(mContext,"USERID:"+useridSP+"\npmd.id:"+(alist.indexOf(tmp)+1),Toast.LENGTH_LONG).show();*/
 
                 /*ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
                 ed.apply();*/
 
-                int productid=current.getPid();
+                //int productid=current.getPid();
 
 //                boolean cartInserted=db.addtoCart(new CartModel(useridSP,(alist.indexOf(tmp)+1),1));
                 boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
                 if(cartInserted){
                     tmp.setClickbutton(true);
-                    /*Toast.makeText(mContext, "Add Button pressed", Toast.LENGTH_LONG).show();*/
+
                 }
 
                 notifyDataSetChanged();

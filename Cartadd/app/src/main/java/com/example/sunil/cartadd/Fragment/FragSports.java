@@ -7,19 +7,49 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.example.sunil.cartadd.Adapter.MyAdapter;
+import com.example.sunil.cartadd.Database.DatabaseHandler;
+import com.example.sunil.cartadd.Interface.UpdateListener;
+import com.example.sunil.cartadd.Model.ProductModel;
 import com.example.sunil.cartadd.R;
 
+import java.util.ArrayList;
 
-public class FragSports extends Fragment {
 
+public class FragSports extends Fragment /*implements UpdateListener*/ {
+
+    Context mContext;
+    ListView lvsports;
+    DatabaseHandler db;
+    ArrayList <ProductModel> sportslist;
+    MyAdapter sadapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_frag_sports, container, false);
+      View view=inflater.inflate(R.layout.fragment_frag_sports,container,false);
+      lvsports=view.findViewById(R.id.fragsports_lisview);
+
+      this.mContext=container.getContext();
+      db=new DatabaseHandler(mContext);
+
+      sportslist=db.getSportsProduct();
+      sadapter=new MyAdapter(mContext,sportslist);
+      lvsports.setAdapter(sadapter);
+
+      sadapter.setOnItemListener((UpdateListener) mContext);
+
+        return view;
     }
+
+    /*@Override
+    public void onUpdateListenernow(boolean status, int position) {
+
+    }*/
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

@@ -18,13 +18,13 @@ import com.example.sunil.cartadd.R;
 import java.util.ArrayList;
 
 
-public class FragElectronics extends Fragment implements UpdateListener {
+public class FragElectronics extends Fragment /*implements UpdateListener*/ {
 
     Context mContext;
     DatabaseHandler db;
     ListView lvelec;
-    ArrayList<ProductModel> eleclist;
-    MyAdapter adapter;
+    ArrayList <ProductModel> eleclist;
+    MyAdapter eadapter;
 
 
     @Override
@@ -38,18 +38,18 @@ public class FragElectronics extends Fragment implements UpdateListener {
         db=new DatabaseHandler(mContext);
 
         eleclist=db.getElectronicsProduct();
-        adapter=new MyAdapter(mContext,eleclist);
-        lvelec.setAdapter(adapter);
+        eadapter=new MyAdapter(mContext,eleclist);
+        lvelec.setAdapter(eadapter);
 
-        adapter.setOnItemListener((UpdateListener) mContext);
+        eadapter.setOnItemListener((UpdateListener) mContext);
 
-        return inflater.inflate(R.layout.fragment_frag_electronics, container, false);
+        return view;
     }
 
-    @Override
+    /*@Override
     public void onUpdateListenernow(boolean status, int position) {
 
-    }
+    }*/
 
 
     public interface OnFragmentInteractionListener {

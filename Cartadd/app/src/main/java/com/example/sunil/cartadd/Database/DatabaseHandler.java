@@ -86,7 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "(" + COL_PROD_ID + " INTEGER PRIMARY KEY,"
                 + COL_PROD_NAME + " TEXT,"
                 + COL_PROD_PRICE + " INT,"
-                + COL_PROD_PRICE + " TEXT" + ")";
+                + COL_PROD_CATEGORY + " TEXT" + ")";
 
         //Define query For Table 3
         String CREATE_TABLE_CART = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_CART +
@@ -145,7 +145,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues value = new ContentValues();
         value.put(COL_PROD_NAME, pmd.getProdname());
         value.put(COL_PROD_PRICE, pmd.getProdprice());
-        value.put(COL_PROD_CATEGORY, pmd.getProdprice());
+        value.put(COL_PROD_CATEGORY, pmd.getProdcat());
 
         long result = db.insert(TABLE_NAME_PROD, null, value);
         if (result == -1)
@@ -180,6 +180,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         return addCheck;
+    }
+
+    public Cursor addButtonStatus(int productid, int useridSP){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        /*String leftOuterQuery="SELECT * FROM " + TABLE_NAME_CART + " LEFT JOIN " + TABLE_NAME_PROD
+                + " ON " + TABLE_NAME_CART + "." + COL_CART_PRODID + " = " + TABLE_NAME_PROD + "." + COL_PROD_ID
+                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";*/
+
+        String leftOuterQuery="SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN " + TABLE_NAME_CART
+                + " ON " + TABLE_NAME_PROD + "." + COL_PROD_ID + " = " + TABLE_NAME_CART + "." + COL_CART_PRODID
+                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";
+
+        Cursor result=db.rawQuery(leftOuterQuery, new String[]{String.valueOf(productid), String.valueOf(useridSP)});
+
+        return result;
+
     }
 
     public boolean qtyUpdate(CartModel cmd) {
@@ -372,15 +390,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllelecdProductData() {
 
-        String checkcategory="ELECTRONICS";
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +checkcategory,null);
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'ELECTRONICS'",null);
 
         return cur;
 
     }
-
-
 
     public ArrayList<ProductModel> getElectronicsProduct() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -402,5 +417,64 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return mlist;
     }
 
+
+    public Cursor getAllgroceryProductData() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'GROCERY'",null);
+
+        return cur;
+    }
+
+
+    public ArrayList<ProductModel> getGroceryProduct() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = getAllgroceryProductData();
+
+        ArrayList<ProductModel> mlist = new ArrayList<>();
+
+        if (cur != null) {
+
+            cur.moveToFirst();
+            do {
+                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
+                int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+
+                mlist.add(new ProductModel(productid,prodname,prodprice));
+            } while (cur.moveToNext());
+        }
+        return mlist;
+    }
+
+
+    public Cursor getAllsportsProductData() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" +"'SPORTS'",null);
+
+        return cur;
+    }
+
+
+    public ArrayList<ProductModel> getSportsProduct() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = getAllsportsProductData();
+
+        ArrayList<ProductModel> mlist = new ArrayList<>();
+
+        if (cur != null) {
+
+            cur.moveToFirst();
+            do {
+                int productid=cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
+                int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+
+                mlist.add(new ProductModel(productid,prodname,prodprice));
+            } while (cur.moveToNext());
+        }
+        return mlist;
+    }
 
 }
