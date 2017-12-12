@@ -39,15 +39,6 @@ public class ProductModel {
 
     }
 
-    public ProductModel(int pid, String prodname, int prodprice, boolean b) {
-        this.pid=pid;
-        this.prodname = prodname;
-        this.prodprice = prodprice;
-        this.clickbutton=b;
-
-    }
-
-
     public int getPid() {
         return pid;
     }

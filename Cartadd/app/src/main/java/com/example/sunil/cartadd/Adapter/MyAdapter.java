@@ -1,8 +1,10 @@
 package com.example.sunil.cartadd.Adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.sunil.cartadd.Async.MyAsync;
 import com.example.sunil.cartadd.Database.DatabaseHandler;
 import com.example.sunil.cartadd.Interface.UpdateListener;
 import com.example.sunil.cartadd.Model.CartModel;
@@ -48,6 +52,7 @@ public class MyAdapter extends BaseAdapter{
 
     public MyAdapter() {
     }
+
 
     @Override
     public int getCount() {
@@ -96,9 +101,6 @@ public class MyAdapter extends BaseAdapter{
 
         vh.click.setTag(current);
 
-        final int useridSP=sp.getInt(UserIDK,1);
-        final int productid=current.getPid();
-
         //It is neccessary else it will select multiple buttons
         if(current.isClickbutton()){
             vh.click.setEnabled(false);
@@ -113,57 +115,60 @@ public class MyAdapter extends BaseAdapter{
 
                 Button bt = (Button) view;
 
-                ProductModel tmp = (ProductModel) bt.getTag();
+                final ProductModel tmp = (ProductModel) bt.getTag();
 
                 UserModel umd=new UserModel();
                 ProductModel pmd=new ProductModel();
 
-                //int useridSP=sp.getInt(UserIDK,1);
+                int useridSP=sp.getInt(UserIDK,1);
                 Log.d("myTag","Productid:"+current.getPid());
 
+                /*Toast.makeText(mContext,"USERID:"+useridSP+"\npmd.id:"+(alist.indexOf(tmp)+1),Toast.LENGTH_LONG).show();*/
 
                 /*ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
                 ed.apply();*/
 
-                //int productid=current.getPid();
+                int productid=current.getPid();
 
 //                boolean cartInserted=db.addtoCart(new CartModel(useridSP,(alist.indexOf(tmp)+1),1));
-                boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
+               /* boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
                 if(cartInserted){
                     tmp.setClickbutton(true);
+                    Toast.makeText(mContext, "Add Button pressed", Toast.LENGTH_LONG).show();
                 }
 
                 notifyDataSetChanged();
 
-                onUpdateListener.onUpdateListenernow(cartInserted,i);
+                onUpdateListener.onUpdateListenernow(cartInserted,i);*/
+
+
+                 MyAsync async=new MyAsync(mContext,productid);
+                async.execute();
+
+                mContext.registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+
+                        boolean cartInserted =intent.getBooleanExtra("status",false);
+
+                        if(cartInserted){
+                            tmp.setClickbutton(true);
+                        }
+
+                        notifyDataSetChanged();
+                        onUpdateListener.onUpdateListenernow(cartInserted,i);
+                    }
+                }, new IntentFilter("ACTION"));
+
+               /* mContext.unregisterReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+
+                    }
+                });*/
 
             }
         });
-
-
-        /*Cursor cur=db.addButtonStatus(*//*productid,useridSP*//*);
-
-        if(cur!=null){
-
-            while(cur.moveToNext()){
-
-                ProductModel pd=new ProductModel();
-
-                int cartid,prodid=0;
-                cartid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_ID));
-                prodid=cur.getInt(cur.getColumnIndex(DatabaseHandler.COL_CART_PRODID));
-
-                ProductModel position= (ProductModel) getItem(prodid);
-
-                *//*if(cartid!=0)
-                {
-                    Log.d("myTag2","Cartid:"+prodid);
-                    position.setClickbutton(true);
-                }*//*
-
-            }
-        }*/
-
 
         return view;
     }

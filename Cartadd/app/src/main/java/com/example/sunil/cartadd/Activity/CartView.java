@@ -58,6 +58,8 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         displayTotalPrice=db.getCartTotalPrice();
         totalprice.setText("Total Cost:Rs."+displayTotalPrice);
 
+
+
     }
 
     @Override
@@ -94,6 +96,11 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         }
     };
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(A);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,11 +131,11 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
               //without this also possible to call back previous intent Activity via Manifest
             case android.R.id.home:
 
-                /*Intent i=new Intent(CartView.this,HomeActivity.class);
+                Intent i=new Intent(CartView.this,HomeActivity.class);
 
-                i.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
-                startActivity(i);*/
-                onBackPressed();
+//                i.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+                startActivity(i);
+//                onBackPressed();
                 break;
         }
 

@@ -177,7 +177,7 @@ public class CartAdapter extends BaseAdapter {
                     c.putExtra("position",i);
                     mContext.sendBroadcast(c);
 //                  cartlist.remove(i);      //Use it if you are not using BroadcastReciever method in Cartview.java.
-                    notifyDataSetChanged();
+              //      notifyDataSetChanged();
                 }
             });
 

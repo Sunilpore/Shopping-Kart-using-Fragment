@@ -30,6 +30,10 @@ public class CartModel {
         this.userid = userid;
     }
 
+    public CartModel(ProductModel prodItem) {
+        this.prodItem = prodItem;
+    }
+
     public CartModel() {
      }
 

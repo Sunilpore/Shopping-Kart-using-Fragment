@@ -1,6 +1,7 @@
 package com.example.sunil.cartadd.Fragment;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import com.example.sunil.cartadd.Adapter.MyAdapter;
 import com.example.sunil.cartadd.Database.DatabaseHandler;
 import com.example.sunil.cartadd.Interface.UpdateListener;
+import com.example.sunil.cartadd.Model.CartModel;
 import com.example.sunil.cartadd.Model.ProductModel;
 import com.example.sunil.cartadd.R;
 
@@ -46,11 +48,17 @@ public class FragElectronics extends Fragment /*implements UpdateListener*/ {
         return view;
     }
 
+
+
     /*@Override
     public void onUpdateListenernow(boolean status, int position) {
 
     }*/
 
+
+    public void buttonDisable(){
+
+    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

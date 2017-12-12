@@ -205,15 +205,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        /* //Here parameter, qtyUpdate(parameter)
-         //Don't use this.Because it creates new instance and take first value if this is used > new CartModel(cartid,qty) in Database;
-            //Hence don't create object/instance of Cartmodel
-            //Either take value from parameter and put it inside value.put(COLMN_NAME,put here); and in update() Query
-            //If we use above constructor method it will take and update only First value of User
-
-            //OR Create CartModel object in parameter and get its value through model class i.e. CartModel.getterMethod()
-        new CartModel(userid,cartid,qty);
-        */
+        //Ref 1
 
         ContentValues value = new ContentValues();
         value.put(COL_CART_QUANTITY, cmd.getCartquantity());
@@ -336,6 +328,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int cartProdprize = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
                 int cartItemQty = cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY));
                 int cartid = cur.getInt(cur.getColumnIndex(COL_CART_ID));
+               // int productid = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
                 /*cmd.setCartquantity(cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY)));
 
                 pmd.setProdname(cur.getString(cur.getColumnIndex(COL_PROD_NAME)));
@@ -390,11 +383,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllelecdProductData() {
 
+        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+        ed = sp.edit();
+
+        int useridSP = sp.getInt(UserIDK, 0);
+
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'ELECTRONICS'", null);
+       // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'ELECTRONICS'", null);
+
+
+        Cursor cur=db.rawQuery("select * from " + TABLE_NAME_PROD + " LEFT JOIN "
+                + "(select * from " + TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " = " +useridSP + ")"
+                + " ON " + COL_PROD_ID + " = " + COL_CART_PRODID + " WHERE " + COL_PROD_CATEGORY + " = " + "'ELECTRONICS'",null);
 
         return cur;
-
     }
 
     public ArrayList<ProductModel> getElectronicsProduct() {
@@ -411,7 +413,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
+                /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_ID));
+                boolean bt;
+                if(checkAdded==null)
+                    bt=false;
+                else
+                    bt=true;*/
+                //Ref 2
+
+
+
                 mlist.add(new ProductModel(productid, prodname, prodprice));
+                // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
         return mlist;
@@ -420,8 +433,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllgroceryProductData() {
 
+        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+        ed = sp.edit();
+
+        int useridSP = sp.getInt(UserIDK, 0);
+
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'GROCERY'", null);
+       // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'GROCERY'", null);
+
+        Cursor cur=db.rawQuery("SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN "
+                + "(SELECT * FROM " + TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " = " +useridSP + ")"
+                + " ON " + COL_PROD_ID + " = " + COL_CART_PRODID + " WHERE " + COL_PROD_CATEGORY + " = " +"'GROCERY'",null);
 
         return cur;
     }
@@ -441,7 +463,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
+                /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
+                boolean bt;
+                if (checkAdded==null)
+                    bt=false;
+                else
+                    bt=true;*/
+
                 mlist.add(new ProductModel(productid, prodname, prodprice));
+                // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
         return mlist;
@@ -450,11 +480,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllsportsProductData() {
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        //Cursor cur2 = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " left join " + TABLE_NAME_CART
-                + " ON " + COL_CART_PRODID + " = " + COL_PROD_ID + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
+        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+        ed = sp.edit();
 
+        int useridSP = sp.getInt(UserIDK, 0);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+       // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
+
+        /*Cursor cur3 = db.rawQuery("select * from " + TABLE_NAME_PROD + " left join " + TABLE_NAME_CART
+                + " ON " + COL_CART_PRODID + " = " + COL_PROD_ID + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);*/
+
+        Cursor cur = db.rawQuery("SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN "
+                + "(SELECT * FROM " +TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " = " +useridSP +")"
+                + " ON " + COL_PROD_ID + " = " + COL_CART_PRODID + " WHERE " + COL_PROD_CATEGORY + " = " +"'SPORTS'",null);
 
         return cur;
     }
@@ -474,18 +513,48 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
 
-                String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
-                boolean b=false;
+                /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
+                boolean bt;
                 if (checkAdded==null)
-                    b=false;
+                    bt=false;
                 else
-                    b=true;
+                    bt=true;*/
 
 
-                mlist.add(new ProductModel(productid, prodname, prodprice,b));
+                mlist.add(new ProductModel(productid, prodname, prodprice));
+                //  mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
         return mlist;
     }
 
 }
+
+
+
+/*Note:-
+
+  Below are the Refrence Sections are used for refrence
+
+Ref 1:
+
+Here parameter, qtyUpdate(parameter)
+         Don't use this.Because it creates new instance and take first value if this is used > new CartModel(cartid,qty) in Database;
+            Hence don't create object/instance of Cartmodel
+            Either take value from parameter and put it inside value.put(COLMN_NAME,put here); and in update() Query
+            If we use above constructor method it will take and update only First value of User
+
+            OR Create CartModel object in parameter and get its value through model class i.e. CartModel.getterMethod()
+        new CartModel(userid,cartid,qty);
+
+
+
+
+ Ref 2:
+
+Here twister Logic for bt is necessary.Means if tb=true,it will set isClickbutton() method also true via constructor.
+ Which further used at MyAdapter in 'if(current.isClickbutton())'.
+ If isClickbutton is true then it will execute if condition make the button false.
+
+
+---*/

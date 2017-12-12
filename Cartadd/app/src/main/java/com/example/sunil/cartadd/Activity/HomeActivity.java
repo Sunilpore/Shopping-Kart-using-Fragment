@@ -193,7 +193,8 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
 
         if(status){
 
-            count=count+1;
+            //count=count+1;
+            count=getCount();
             add=String.valueOf(count) + " Items Added";
             countview.setTitle(add);
 
@@ -208,11 +209,12 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
         }
     }
 
-    private void getCount(){
+    private int getCount(){
 
         count=db.cartCount(sp.getInt(UserIDK,0));
         countview.setTitle(""+count+" Items Added");
 
+        return count;
     }
 
     @Override
@@ -226,4 +228,5 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }
