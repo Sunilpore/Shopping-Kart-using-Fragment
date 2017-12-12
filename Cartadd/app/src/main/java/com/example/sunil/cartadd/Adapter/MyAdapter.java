@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * Created by Sunil on 11/13/2017.
  */
 
-public class MyAdapter extends BaseAdapter{
+public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
 
     public static final String MyprefK = "Prefkey";
     public static final String UserIDK = "UserIDkey";
@@ -38,12 +38,12 @@ public class MyAdapter extends BaseAdapter{
     SharedPreferences.Editor ed;
 
     private Context mContext;
-    private ArrayList<ProductModel> alist;
+    private ArrayList<CartModel> alist;
     LayoutInflater inflater;
     DatabaseHandler db;
-    UpdateListener onUpdateListener;
+   // UpdateListener onUpdateListener;
 
-    public MyAdapter(Context mContext, ArrayList<ProductModel> alist) {
+    public MyAdapter(Context mContext, ArrayList<CartModel> alist) {
         this.mContext=mContext;
         this.alist = alist;
         inflater=LayoutInflater.from(mContext);
@@ -84,25 +84,32 @@ public class MyAdapter extends BaseAdapter{
             vh.prodprice=view.findViewById(R.id.tv_prodprize);
             vh.click=view.findViewById(R.id.bt_click);
             view.setTag(vh);
+
+
+            for(CartModel cartModel :alist){
+                int productId=cartModel.getProdid();
+                buttonDisable(productId);
+            }
+
         }
         else{
             vh= (ViewHolder) view.getTag();
         }
 
-        final ProductModel current= (ProductModel) getItem(i);
+        final CartModel current= (CartModel) getItem(i);
 
         /*//This can also possible by using getter() method
     vh.prodname.setText(current.getProdname());
     vh.prodprice.setText(String.valueOf(current.getProdprice()));*/
 
         //Here we setText() by using constructor
-        vh.prodname.setText(current.prodname);
-        vh.prodprice.setText(String.valueOf(current.prodprice));
+        vh.prodname.setText(current.getProdItem().prodname);
+        vh.prodprice.setText(String.valueOf(current.getProdItem().prodprice));
 
         vh.click.setTag(current);
 
         //It is neccessary else it will select multiple buttons
-        if(current.isClickbutton()){
+        if(current.getProdItem().isClickbutton()){
             vh.click.setEnabled(false);
         }
         else{
@@ -115,20 +122,20 @@ public class MyAdapter extends BaseAdapter{
 
                 Button bt = (Button) view;
 
-                final ProductModel tmp = (ProductModel) bt.getTag();
+                final CartModel tmp = (CartModel) bt.getTag();
 
                 UserModel umd=new UserModel();
                 ProductModel pmd=new ProductModel();
 
                 int useridSP=sp.getInt(UserIDK,1);
-                Log.d("myTag","Productid:"+current.getPid());
+                Log.d("myTag","Productid:"+current.getProdItem().getPid());
 
                 /*Toast.makeText(mContext,"USERID:"+useridSP+"\npmd.id:"+(alist.indexOf(tmp)+1),Toast.LENGTH_LONG).show();*/
 
                 /*ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
                 ed.apply();*/
 
-                int productid=current.getPid();
+                int productid=current.getProdItem().getPid();
 
 //                boolean cartInserted=db.addtoCart(new CartModel(useridSP,(alist.indexOf(tmp)+1),1));
                /* boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
@@ -141,11 +148,11 @@ public class MyAdapter extends BaseAdapter{
 
                 onUpdateListener.onUpdateListenernow(cartInserted,i);*/
 
-
+                //onUpdateListener= (UpdateListener) mContext;
                  MyAsync async=new MyAsync(mContext,productid);
-                async.execute();
+                 async.execute();
 
-                mContext.registerReceiver(new BroadcastReceiver() {
+                /*mContext.registerReceiver(new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
 
@@ -158,7 +165,7 @@ public class MyAdapter extends BaseAdapter{
                         notifyDataSetChanged();
                         onUpdateListener.onUpdateListenernow(cartInserted,i);
                     }
-                }, new IntentFilter("ACTION"));
+                }, new IntentFilter("ACTION"));*/
 
                /* mContext.unregisterReceiver(new BroadcastReceiver() {
                     @Override
@@ -173,14 +180,45 @@ public class MyAdapter extends BaseAdapter{
         return view;
     }
 
+
+
     private class ViewHolder{
         TextView prodname,prodprice;
         Button click;
 
     }
 
-    public void setOnItemListener(UpdateListener onUpdateListener){
-        this.onUpdateListener=onUpdateListener;
+    private void buttonDisable(int productId){
+
+        ArrayList <CartModel> cartlist=alist;
+
+        for(CartModel cartModel:cartlist){
+
+            ProductModel productModel=cartModel.getProdItem();
+            if(productModel.getPid() == productId){
+
+                productModel.setClickbutton(true);
+
+                productModel.setPid(cartModel.getProdItem().getPid());
+                productModel.setProdname(cartModel.getProdItem().getProdname());
+                productModel.setProdprice(cartModel.getProdItem().getProdprice());
+                productModel.setProdcat(cartModel.getProdItem().getProdcat());
+
+                cartModel.setProdItem(productModel);
+                notifyDataSetChanged();
+            }
+        }
+
     }
+    //Use one of them method
+
+    /*@Override
+    public void onUpdateListenernow(boolean status, int position) {
+        onUpdateListener.onUpdateListenernow(status, position);
+    }*/
+
+   /* public void setOnItemListener(UpdateListener onUpdateListener){
+        this.onUpdateListener=onUpdateListener;
+    }*/
 
 }

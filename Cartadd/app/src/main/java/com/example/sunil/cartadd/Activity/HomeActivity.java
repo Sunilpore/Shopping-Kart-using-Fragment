@@ -1,7 +1,9 @@
 package com.example.sunil.cartadd.Activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -33,7 +35,7 @@ import com.example.sunil.cartadd.Interface.UpdateListener;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity implements UpdateListener, FragElectronics.OnFragmentInteractionListener, FragGrocery.OnFragmentInteractionListener, FragSports.OnFragmentInteractionListener {
+public class HomeActivity extends AppCompatActivity implements /*UpdateListener,*/ FragElectronics.OnFragmentInteractionListener, FragGrocery.OnFragmentInteractionListener, FragSports.OnFragmentInteractionListener {
 
     public static final String MyprefK="Prefkey";
     public static final String CheckK="Checkkey";
@@ -166,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
 
                 Intent in=new Intent(HomeActivity.this,CartView.class);
 
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(in);
 
                 //When you call finish() method it will not hold the current status of 'ADD' button,while returning from CartView to HomeActivity
@@ -188,7 +190,7 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    /*@Override
     public void onUpdateListenernow(boolean status, int position) {
 
         if(status){
@@ -207,6 +209,44 @@ public class HomeActivity extends AppCompatActivity implements UpdateListener, F
             snackbarView.setBackgroundColor(Color.RED);
             sn.show();
         }
+    }*/
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver(recallBroadcastReciever, new IntentFilter("ACTION"));
+    }
+
+
+    BroadcastReceiver recallBroadcastReciever=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Boolean isCartInserted=intent.getBooleanExtra("status",false);
+
+            if(isCartInserted){
+
+                count=getCount();
+                add=String.valueOf(count) + " Items Added";
+                countview.setTitle(add);
+
+                Snackbar.make(cordlay,count+" Product added in Cart",Snackbar.LENGTH_LONG).show();
+            }
+            else{
+
+                Snackbar sn=Snackbar.make(cordlay,"Item is already added into the Cart",Snackbar.LENGTH_LONG);
+                View snackbarView = sn.getView();
+                snackbarView.setBackgroundColor(Color.RED);
+                sn.show();
+            }
+
+        }
+    };
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        unregisterReceiver(recallBroadcastReciever);
     }
 
     private int getCount(){

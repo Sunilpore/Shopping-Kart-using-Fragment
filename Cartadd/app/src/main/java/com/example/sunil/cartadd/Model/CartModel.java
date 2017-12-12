@@ -21,9 +21,9 @@ public class CartModel {
           this.cartid=cartid;
      }
 
-    public CartModel(int cartid, int cartquantity) {
-        this.cartid = cartid;
-        this.cartquantity = cartquantity;
+    public CartModel(int prodid, ProductModel prodItem) {
+        this.prodid = prodid;
+        this.prodItem = prodItem;
     }
 
     public CartModel(int userid) {

@@ -399,11 +399,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return cur;
     }
 
-    public ArrayList<ProductModel> getElectronicsProduct() {
+    public ArrayList<CartModel> getElectronicsProduct() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = getAllelecdProductData();
 
-        ArrayList<ProductModel> mlist = new ArrayList<>();
+        ArrayList<CartModel> mlist = new ArrayList<>();
+        ProductModel pmd;
 
         if (cur != null) {
 
@@ -412,6 +413,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_ID));
                 boolean bt;
@@ -423,7 +425,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
 
-                mlist.add(new ProductModel(productid, prodname, prodprice));
+                pmd =new ProductModel(productid, prodname, prodprice);
+                mlist.add(new CartModel(cartProdId,pmd));
                 // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
@@ -449,11 +452,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<ProductModel> getGroceryProduct() {
+    public ArrayList<CartModel> getGroceryProduct() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = getAllgroceryProductData();
 
-        ArrayList<ProductModel> mlist = new ArrayList<>();
+        ArrayList<CartModel> mlist = new ArrayList<>();
+        ProductModel pmd;
 
         if (cur != null) {
 
@@ -462,6 +466,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
                 boolean bt;
@@ -470,7 +475,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 else
                     bt=true;*/
 
-                mlist.add(new ProductModel(productid, prodname, prodprice));
+                pmd =new ProductModel(productid, prodname, prodprice);
+                mlist.add(new CartModel(cartProdId,pmd));
                 // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
@@ -499,11 +505,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<ProductModel> getSportsProduct() {
+    public ArrayList<CartModel> getSportsProduct() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = getAllsportsProductData();
 
-        ArrayList<ProductModel> mlist = new ArrayList<>();
+        ArrayList<CartModel> mlist = new ArrayList<>();
+        ProductModel pmd;
 
         if (cur != null) {
 
@@ -512,6 +519,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
                 boolean bt;
@@ -521,7 +529,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     bt=true;*/
 
 
-                mlist.add(new ProductModel(productid, prodname, prodprice));
+                pmd =new ProductModel(productid, prodname, prodprice);
+                mlist.add(new CartModel(cartProdId,pmd));
                 //  mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }

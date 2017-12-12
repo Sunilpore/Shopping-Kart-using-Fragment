@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Cartadd.iml" filepath="$PROJECT_DIR$/Cartadd.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../../Sith3/Desktop/atul/android/gitHub/Raw-Shopping-Cart/Cartadd/Cartadd.iml" filepath="$PROJECT_DIR$/../../../../../Sith3/Desktop/atul/android/gitHub/Raw-Shopping-Cart/Cartadd/Cartadd.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../../Sith3/Desktop/atul/android/gitHub/Raw-Shopping-Cart/Cartadd/app/app.iml" filepath="$PROJECT_DIR$/../../../../../Sith3/Desktop/atul/android/gitHub/Raw-Shopping-Cart/Cartadd/app/app.iml" />
     </modules>
   </component>
 </project>

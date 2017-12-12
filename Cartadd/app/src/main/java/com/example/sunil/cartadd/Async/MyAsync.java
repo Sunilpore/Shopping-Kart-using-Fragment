@@ -55,6 +55,7 @@ public class MyAsync extends AsyncTask<Integer, Void, Boolean> {
 
         Intent i=new Intent();
         i.setAction("ACTION");
+        i.putExtra("ProductId",productid);
         i.putExtra("status",aBoolean);
         mContext.sendBroadcast(i);
     }
