@@ -88,7 +88,7 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
 
             for(CartModel cartModel :alist){
                 int productId=cartModel.getProdid();
-                buttonDisable(productId);
+                //buttonDisable(productId);
             }
 
         }
@@ -109,7 +109,8 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
         vh.click.setTag(current);
 
         //It is neccessary else it will select multiple buttons
-        if(current.getProdItem().isClickbutton()){
+        Log.d("myTag","FORloop Cartid:"+current.cartid);
+        if(current.getProdItem().isClickbutton() || current.cartid!=0){
             vh.click.setEnabled(false);
         }
         else{
@@ -130,49 +131,16 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
                 int useridSP=sp.getInt(UserIDK,1);
                 Log.d("myTag","Productid:"+current.getProdItem().getPid());
 
-                /*Toast.makeText(mContext,"USERID:"+useridSP+"\npmd.id:"+(alist.indexOf(tmp)+1),Toast.LENGTH_LONG).show();*/
-
-                /*ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
-                ed.apply();*/
-
                 int productid=current.getProdItem().getPid();
 
-//                boolean cartInserted=db.addtoCart(new CartModel(useridSP,(alist.indexOf(tmp)+1),1));
-               /* boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
-                if(cartInserted){
-                    tmp.setClickbutton(true);
-                    Toast.makeText(mContext, "Add Button pressed", Toast.LENGTH_LONG).show();
-                }
+                //Meth 4
+                //M 1.1
 
-                notifyDataSetChanged();
-
-                onUpdateListener.onUpdateListenernow(cartInserted,i);*/
-
-                //onUpdateListener= (UpdateListener) mContext;
+                //M 3.1
                  MyAsync async=new MyAsync(mContext,productid);
                  async.execute();
 
-                /*mContext.registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-
-                        boolean cartInserted =intent.getBooleanExtra("status",false);
-
-                        if(cartInserted){
-                            tmp.setClickbutton(true);
-                        }
-
-                        notifyDataSetChanged();
-                        onUpdateListener.onUpdateListenernow(cartInserted,i);
-                    }
-                }, new IntentFilter("ACTION"));*/
-
-               /* mContext.unregisterReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-
-                    }
-                });*/
+                //Meth 2
 
             }
         });
@@ -188,7 +156,7 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
 
     }
 
-    private void buttonDisable(int productId){
+    /*private void buttonDisable(int productId){
 
         ArrayList <CartModel> cartlist=alist;
 
@@ -209,16 +177,116 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
             }
         }
 
-    }
+    }*/
+
     //Use one of them method
+    //M 3.2
 
-    /*@Override
-    public void onUpdateListenernow(boolean status, int position) {
-        onUpdateListener.onUpdateListenernow(status, position);
-    }*/
-
-   /* public void setOnItemListener(UpdateListener onUpdateListener){
-        this.onUpdateListener=onUpdateListener;
-    }*/
+    //M 1.2
 
 }
+
+
+
+
+
+/*Note:-
+
+Code method Modified:-
+
+Meth 1:-
+       This is one way to implement interface where we initialize inerface object/variable via method
+       and Context of interface object/vaiable is provided in a method where we need to implement.
+
+     public class MyAdapter extends BaseAdapter implements UpdateListener{
+
+    UpdateListener onUpdateListener;
+
+ M 1.1,   onUpdateListener.onUpdateListenernow(cartInserted,i);
+
+ M 1.2,    public void setOnItemListener(UpdateListener onUpdateListener){
+        this.onUpdateListener=onUpdateListener;
+    }
+
+  }
+
+
+Meth 2:- (Date:11 Dec 17)
+
+    //This is used when we use BroadcastReceiver AND its registerReceiver() method using Anonymous class in non-Activity class.
+      mContext.registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+
+                        boolean cartInserted =intent.getBooleanExtra("status",false);
+
+                        if(cartInserted){
+                            tmp.setClickbutton(true);
+                        }
+
+                        notifyDataSetChanged();
+                        onUpdateListener.onUpdateListenernow(cartInserted,i);
+                    }
+                }, new IntentFilter("ACTION"));
+
+      //When we try to use this unregisterReceiver() throw error as BroadcastReciever is not registered but it registere already.
+      //So,try to avoid this unregisterReceiver() part
+      mContext.unregisterReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+
+                    }
+                });
+
+
+ Meth 3:- (Date: 12 Dec 17)
+       This is another method to implement interface by providing Context of Interface class where we need interface method.
+
+       -->
+       public class MyAdapter extends BaseAdapter implements UpdateListener{
+
+        UpdateListener onUpdateListener;
+
+    M 3.1,  onUpdateListener= (UpdateListener) mContext;
+
+    M 3.2,  @Override
+         public void onUpdateListenernow(boolean status, int position) {
+         onUpdateListener.onUpdateListenernow(status, position);
+          }
+
+       }
+
+Meth 4:- (Date: 12 Dec 17)
+
+     // This method is used when we not use addtocart() method in AsyncTask, where we use BroadcastReciver to send its status at MyAdapter and in HomeActivity.
+
+   {  //Use this one alist.indexOf(tmp) when you not able to get productid via ProductModel
+     ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
+     ed.apply();
+
+     int productid=current.getPid(); //When we use ProductModel in constructor
+     int productid=current.getProdItem().getPid(); //When we use CartModel in constructor
+
+     boolean cartInserted=db.addtoCart(new CartModel(useridSP,(alist.indexOf(tmp)+1),1));}
+
+     boolean cartInserted=db.addtoCart(new CartModel(useridSP,productid,1));
+      if(cartInserted){
+          tmp.setClickbutton(true);
+                    Toast.makeText(mContext, "Add Button pressed", Toast.LENGTH_LONG).show();
+                }
+
+                notifyDataSetChanged();
+
+
+
+
+
+
+  Below are the Refrence Sections are used for refrence
+
+ Ref 1:
+
+ Ref 2:
+
+
+---*/

@@ -168,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
 
                 Intent in=new Intent(HomeActivity.this,CartView.class);
 
-                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                //in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(in);
 
                 //When you call finish() method it will not hold the current status of 'ADD' button,while returning from CartView to HomeActivity

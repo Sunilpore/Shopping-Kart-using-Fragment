@@ -21,7 +21,8 @@ public class CartModel {
           this.cartid=cartid;
      }
 
-    public CartModel(int prodid, ProductModel prodItem) {
+    public CartModel(int cartid,int prodid, ProductModel prodItem) {
+        this.cartid = cartid;
         this.prodid = prodid;
         this.prodItem = prodItem;
     }

@@ -413,6 +413,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartId = cur.getInt(cur.getColumnIndex(COL_CART_ID));
                 int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_ID));
@@ -426,7 +427,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
                 pmd =new ProductModel(productid, prodname, prodprice);
-                mlist.add(new CartModel(cartProdId,pmd));
+                mlist.add(new CartModel(cartId,cartProdId,pmd));
                 // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
@@ -466,6 +467,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartId = cur.getInt(cur.getColumnIndex(COL_CART_ID));
                 int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
@@ -476,7 +478,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     bt=true;*/
 
                 pmd =new ProductModel(productid, prodname, prodprice);
-                mlist.add(new CartModel(cartProdId,pmd));
+                mlist.add(new CartModel(cartId,cartProdId,pmd));
                 // mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
@@ -519,6 +521,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+                int cartId = cur.getInt(cur.getColumnIndex(COL_CART_ID));
                 int cartProdId = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
 
                 /*String checkAdded=cur.getString(cur.getColumnIndex(COL_CART_PRODID));
@@ -530,7 +533,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
                 pmd =new ProductModel(productid, prodname, prodprice);
-                mlist.add(new CartModel(cartProdId,pmd));
+                mlist.add(new CartModel(cartId,cartProdId,pmd));
                 //  mlist.add(new ProductModel(productid, prodname, prodprice,bt));
             } while (cur.moveToNext());
         }
@@ -561,7 +564,7 @@ Here parameter, qtyUpdate(parameter)
 
  Ref 2:
 
-Here twister Logic for bt is necessary.Means if tb=true,it will set isClickbutton() method also true via constructor.
+Here twister Logic for bt is necessary.Means if bt=true,it will set isClickbutton() method also true via constructor.
  Which further used at MyAdapter in 'if(current.isClickbutton())'.
  If isClickbutton is true then it will execute if condition make the button false.
 
