@@ -32,6 +32,7 @@ import com.example.sunil.cartadd.Fragment.FragSports;
 import com.example.sunil.cartadd.Model.ProductModel;
 import com.example.sunil.cartadd.R;
 import com.example.sunil.cartadd.Interface.UpdateListener;
+import com.example.sunil.cartadd.Singleton.PreferenceHelper;
 
 import java.util.ArrayList;
 
@@ -42,8 +43,9 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
     public static final String UserIDK = "UserIDkey";
 
     String add;
-    SharedPreferences sp;
-    SharedPreferences.Editor ed;
+    PreferenceHelper sp;
+//    SharedPreferences sp;
+//    SharedPreferences.Editor ed;
 
     /*ListView lv;*/
     CoordinatorLayout cordlay;
@@ -114,12 +116,13 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
 
 
 
-        sp=getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed=sp.edit();
+//        sp=getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed=sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
 
 
-        if(sp.getBoolean(CheckK,true)){
+        if(sp.getCheck(CheckK,true)){
             db.addProductData(new ProductModel("Poduct 1",10,"ELECTRONICS"));
             db.addProductData(new ProductModel("Poduct 2",20,"ELECTRONICS"));
             db.addProductData(new ProductModel("Poduct 3",20,"ELECTRONICS"));
@@ -139,8 +142,10 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
             //Here used apply() instead of commit();
             //Because, commit() blocks and writes its data to persistent storage immediately,where apply() will handle data in background.
 
-            ed.putBoolean(CheckK,false);
-            ed.apply();
+            sp.setCheck(CheckK,false);
+
+            // sp.putBoolean(CheckK,false);
+           // ed.apply();
 //           ed.commit();
         }
 
@@ -190,26 +195,8 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
-    public void onUpdateListenernow(boolean status, int position) {
-
-        if(status){
-
-            //count=count+1;
-            count=getCount();
-            add=String.valueOf(count) + " Items Added";
-            countview.setTitle(add);
-
-            Snackbar.make(cordlay,count+" Product added in Cart",Snackbar.LENGTH_LONG).show();
-        }
-        else{
-
-            Snackbar sn=Snackbar.make(cordlay,"Item is already added into the Cart",Snackbar.LENGTH_LONG);
-            View snackbarView = sn.getView();
-            snackbarView.setBackgroundColor(Color.RED);
-            sn.show();
-        }
-    }*/
+    //Meth 1:- (Date: 15 Dec 17) Snackbar implementation via Interface
+    //Ref 1
 
     @Override
     public void onStart() {
@@ -218,6 +205,8 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
     }
 
 
+    //Snackbar implementation via BroadcastReceiver
+    //Ref 1
     BroadcastReceiver recallBroadcastReciever=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -251,7 +240,7 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
 
     private int getCount(){
 
-        count=db.cartCount(sp.getInt(UserIDK,0));
+        count=db.cartCount(sp.getUserID(UserIDK,0));
         countview.setTitle(""+count+" Items Added");
 
         return count;
@@ -270,3 +259,47 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
     }
 
 }
+
+
+
+/* Important Notes:-
+
+Code method Modified:-
+
+Meth 1:- (Date: 15 Dec 17) Snackbar implementation via Interface
+
+    @Override
+    public void onUpdateListenernow(boolean status, int position) {
+
+        if(status){
+
+            //count=count+1;
+            count=getCount();
+            add=String.valueOf(count) + " Items Added";
+            countview.setTitle(add);
+
+            Snackbar.make(cordlay,count+" Product added in Cart",Snackbar.LENGTH_LONG).show();
+        }
+        else{
+
+            Snackbar sn=Snackbar.make(cordlay,"Item is already added into the Cart",Snackbar.LENGTH_LONG);
+            View snackbarView = sn.getView();
+            snackbarView.setBackgroundColor(Color.RED);
+            sn.show();
+        }
+    }
+
+
+
+
+  Below are the Refrence Sections are used for refrence
+
+ Ref 1: (Date 15 Dec 17)
+
+    When we add Product to cart via addtoCart() method which is used in Async-Task of 'MyAsync.java' we will send its status via BroadcastReceiver
+Which is also possible to use interface in 'MyAsync.java' but we use BroadcastReceiver
+AND hence skip this method.
+
+ Ref 2:
+
+---*/

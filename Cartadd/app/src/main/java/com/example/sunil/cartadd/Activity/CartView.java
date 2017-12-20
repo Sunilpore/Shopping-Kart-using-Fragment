@@ -55,7 +55,8 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         cartlv.setAdapter(ctadapter);
         ctadapter.setOnCartPriceListener((CartTotalPriceUpdateListener) this);
 
-        displayTotalPrice=db.getCartTotalPrice();
+        //displayTotalPrice=db.getCartTotalPrice();   //Ref 1: (Date 17 Dec 17) Total cost methods
+        displayTotalPrice=getTotalCostArray();
         totalprice.setText("Total Cost:Rs."+displayTotalPrice);
 
 
@@ -69,7 +70,7 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         mContext.registerReceiver(A,new IntentFilter(MINUS));
         mContext.registerReceiver(A,new IntentFilter(DEL));
     }
-
+     // CartAdapter.Ref 1
     BroadcastReceiver A=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -84,7 +85,7 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
                 finish();
                 startActivity(i);*/
             }else if (intent.getAction().equals(DEL)){
-                //Here for removing cartitem from cartlist it is necessary to recieve it vai Broadcast and get the postion of item
+                //Here we need postion of item to remove it from cartlist and from Screen view.Hence we recieve it via intent and notify to adapter.
                 //Else notify it at CartAdapter class itself inside vch.cartDel.setOnClickListener(); method
 
                 int position=intent.getIntExtra("position",0);
@@ -145,7 +146,8 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
     @Override
     public void onCartTotalPriceUpdate(boolean status) {
         if(status){
-            displayTotalPrice=db.getCartTotalPrice();
+            //displayTotalPrice=db.getCartTotalPrice();   //Ref 1: (Date 17 Dec 17) Total cost methods
+            displayTotalPrice=getTotalCostArray();
             totalprice.setText("Total Cost:Rs"+displayTotalPrice);
         }
 
@@ -158,4 +160,57 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         startActivity(i);
         finish();
     }
+
+
+    //Ref 1
+    public int getTotalCostArray(){
+        ArrayList <CartModel> clist=cartlist;
+
+        int totalExpPrice=0;
+        for(CartModel cartTotalprice:cartlist)
+        {
+            if(cartTotalprice.cartid!=0){
+                Log.d("myTag3","fexp:"+cartTotalprice.cartid);
+                totalExpPrice=cartTotalprice.getProdItem().getProdprice()*cartTotalprice.cartquantity+totalExpPrice;
+            }
+        }
+        return totalExpPrice;
+    }
+
+
+
 }
+
+
+/* Important Notes:-
+
+Code method Modified:-
+
+Meth 1:-
+
+  Below are the Refrence Sections are used for refrence
+
+ Ref 1: (Date 17 Dec 17) Total cost methods
+
+ Problem-
+    Here we use getTotalCostArray() method instead of db.getCartTotalPrice() method.
+Because getCartTotalPrice() method retrieve data from DatabaseHandler and when you have lot's of data i.e.
+no. of products in Homepage is more than 1000 then you every time hit the database to get Total cost which take more time and slow down app performance.
+
+How to avoid it?????, Solution Explained below-
+ Use alternative metod which is getTotalCostArray() in which we get Data from Cartmodel Arraylist which take data initially from cartlist.
+ Here cartlist load the data From Database only once on onCreate() method call which executes only once at the Start of Activity.
+ And during PLUS,MINUS,DELETE operation it will fetch the current ArrayList data using CartModel.
+
+ Conclusion-It will save our processing time to fetch the data from Database everytime.
+
+
+ Ref 2:
+
+---*/
+
+
+
+
+
+

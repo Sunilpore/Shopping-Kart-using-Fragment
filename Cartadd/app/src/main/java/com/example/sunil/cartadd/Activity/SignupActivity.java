@@ -18,7 +18,7 @@ public class SignupActivity extends AppCompatActivity {
     private static final String TAG ="data";
     DatabaseHandler db;
     EditText fname,uname,pass,cpass;
-    Button signup,back;
+    Button signup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

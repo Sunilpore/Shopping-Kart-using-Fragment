@@ -17,14 +17,16 @@ import android.widget.Toast;
 
 import com.example.sunil.cartadd.Database.DatabaseHandler;
 import com.example.sunil.cartadd.R;
+import com.example.sunil.cartadd.Singleton.PreferenceHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String MyprefK = "Prefkey";
     public static final String UserIDK = "UserIDkey";
 
-    SharedPreferences sp;
-    SharedPreferences.Editor ed;
+    PreferenceHelper sp;
+//    SharedPreferences sp;
+//    SharedPreferences.Editor ed;
 
     DatabaseHandler db;
     EditText uname2, pass2;
@@ -49,8 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
-        sp = getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(this);
 
         db = new DatabaseHandler(this);
 
@@ -71,9 +74,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (cur.moveToFirst()) {
 
                             int userID = cur.getInt(cur.getColumnIndex("USER_ID"));
-                            ed.putInt(UserIDK, userID);
-                            ed.apply();
-                            Toast.makeText(MainActivity.this,"userID:"+userID,Toast.LENGTH_SHORT).show();
+//                            ed.putInt(UserIDK, userID);
+//                            ed.apply();
+                            sp.setUserID(UserIDK, userID);
+                           // Toast.makeText(MainActivity.this,"userID:"+userID,Toast.LENGTH_SHORT).show();
                         }
 
                         Toast.makeText(MainActivity.this, "Login successfully", Toast.LENGTH_LONG).show();

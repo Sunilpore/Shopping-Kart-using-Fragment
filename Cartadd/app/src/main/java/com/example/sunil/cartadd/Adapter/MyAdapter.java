@@ -21,6 +21,7 @@ import com.example.sunil.cartadd.Model.CartModel;
 import com.example.sunil.cartadd.Model.ProductModel;
 import com.example.sunil.cartadd.Model.UserModel;
 import com.example.sunil.cartadd.R;
+import com.example.sunil.cartadd.Singleton.PreferenceHelper;
 
 import java.util.ArrayList;
 
@@ -32,10 +33,10 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
 
     public static final String MyprefK = "Prefkey";
     public static final String UserIDK = "UserIDkey";
-    /*public static final String ProductIDK = "ProductIDkey";*/
 
-    SharedPreferences sp;
-    SharedPreferences.Editor ed;
+    PreferenceHelper sp;
+//    SharedPreferences sp;
+//    SharedPreferences.Editor ed;
 
     private Context mContext;
     private ArrayList<CartModel> alist;
@@ -72,8 +73,9 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
     @Override
     public View getView(final int i, View view, ViewGroup vg) {
 
-        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
         final ViewHolder vh;
         if(view==null) {
@@ -86,10 +88,7 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
             view.setTag(vh);
 
 
-            for(CartModel cartModel :alist){
-                int productId=cartModel.getProdid();
-                //buttonDisable(productId);
-            }
+            //M 5.1
 
         }
         else{
@@ -128,7 +127,7 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
                 UserModel umd=new UserModel();
                 ProductModel pmd=new ProductModel();
 
-                int useridSP=sp.getInt(UserIDK,1);
+                int useridSP=sp.getUserID(UserIDK,1);
                 Log.d("myTag","Productid:"+current.getProdItem().getPid());
 
                 int productid=current.getProdItem().getPid();
@@ -149,14 +148,7 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
     }
 
 
-
-    private class ViewHolder{
-        TextView prodname,prodprice;
-        Button click;
-
-    }
-
-    /*private void buttonDisable(int productId){
+    private void buttonDisable(int productId){
 
         ArrayList <CartModel> cartlist=alist;
 
@@ -176,8 +168,16 @@ public class MyAdapter extends BaseAdapter /*implements UpdateListener*/{
                 notifyDataSetChanged();
             }
         }
+    }
 
-    }*/
+
+    private class ViewHolder{
+        TextView prodname,prodprice;
+        Button click;
+
+    }
+
+    //M 5.2
 
     //Use one of them method
     //M 3.2
@@ -260,6 +260,9 @@ Meth 4:- (Date: 12 Dec 17)
 
      // This method is used when we not use addtocart() method in AsyncTask, where we use BroadcastReciver to send its status at MyAdapter and in HomeActivity.
 
+
+
+
    {  //Use this one alist.indexOf(tmp) when you not able to get productid via ProductModel
      ed.putInt(ProductIDK,alist.indexOf(tmp)+1);
      ed.apply();
@@ -279,10 +282,40 @@ Meth 4:- (Date: 12 Dec 17)
 
 
 
+Meth 5:- (Date: 15 Dec 17)
+
+    //This is not a good practice as it contians for loop for each product of Homepage.
+    //Hence if we have 1000 and more products in Homepage it will take more time to execute it which downgrade the performance of app.
+
+ M 5.1, for(CartModel cartModel :alist){
+                int productId=cartModel.getProdid();
+                buttonDisable(productId);
+            }
+
+  M 5.2, private void buttonDisable(int productId){
+
+        ArrayList <CartModel> cartlist=alist;
+
+        for(CartModel cartModel:cartlist){
+
+            ProductModel productModel=cartModel.getProdItem();
+            if(productModel.getPid() == productId){
+
+                productModel.setClickbutton(true);
+
+                productModel.setPid(cartModel.getProdItem().getPid());
+                productModel.setProdname(cartModel.getProdItem().getProdname());
+                productModel.setProdprice(cartModel.getProdItem().getProdprice());
+                productModel.setProdcat(cartModel.getProdItem().getProdcat());
+
+                cartModel.setProdItem(productModel);
+                notifyDataSetChanged();
+            }
+        }
+    }
 
 
-
-  Below are the Refrence Sections are used for refrence
+  Below are the Reference Sections are used for reference
 
  Ref 1:
 

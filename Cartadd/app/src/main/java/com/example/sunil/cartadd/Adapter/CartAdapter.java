@@ -34,6 +34,7 @@ public class CartAdapter extends BaseAdapter {
     private final String PLUS = "INCREMENT";
     private final String MINUS = "DECREMENT";
     private final String DEL = "DELETE";
+    private static String tag = "myTag3";
 
     Intent a, b, c;
 
@@ -43,6 +44,7 @@ public class CartAdapter extends BaseAdapter {
     LayoutInflater inflater;
     CartTotalPriceUpdateListener onPriceListener;
     DatabaseHandler db;
+
 
     public CartAdapter(Context mContext, ArrayList<CartModel> cartlist) {
         this.mContext = mContext;
@@ -95,6 +97,7 @@ public class CartAdapter extends BaseAdapter {
         int setprize = currentCart.getProdItem().getProdprice() * currentCart.cartquantity;
         String prize = "Rs." + setprize;
 
+
         if (view != null) {
 
             vch.incrQty.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +126,7 @@ public class CartAdapter extends BaseAdapter {
                 else
                 Toast.makeText(mContext,"Qty. NOT increased",Toast.LENGTH_LONG).show();*/
 
-                    mContext.sendBroadcast(a);
+                    //mContext.sendBroadcast(a);
                     notifyDataSetChanged();
 
 
@@ -151,7 +154,7 @@ public class CartAdapter extends BaseAdapter {
                         else
                             Toast.makeText(mContext, "Qty. decreased Not Success", Toast.LENGTH_LONG).show();
 
-                        mContext.sendBroadcast(b);
+                        //mContext.sendBroadcast(b);
                         notifyDataSetChanged();
                     }
 
@@ -169,15 +172,17 @@ public class CartAdapter extends BaseAdapter {
                     c = new Intent(DEL);
                     int cartid = currentCart.getCartid();
 
+                    cartlist.remove(i);     //Ref 2
+                    c.putExtra("position",i);
+                   // mContext.sendBroadcast(c);  //Ref 1
                     boolean isDeleted = db.cartItemdelete(cartid);
                     if(isDeleted)
                         onPriceListener.onCartTotalPriceUpdate(isDeleted);
 
                     Toast.makeText(mContext, "Qty. deleted", Toast.LENGTH_LONG).show();
-                    c.putExtra("position",i);
-                    mContext.sendBroadcast(c);
-//                  cartlist.remove(i);      //Use it if you are not using BroadcastReciever method in Cartview.java.
-              //      notifyDataSetChanged();
+
+//                  cartlist.remove(i);   //Use it if you are not using BroadcastReciever method in Cartview.java.
+                    notifyDataSetChanged();
                 }
             });
 
@@ -188,7 +193,6 @@ public class CartAdapter extends BaseAdapter {
 
         return view;
     }
-
 
     private class CartViewHolder {
 
@@ -201,3 +205,34 @@ public class CartAdapter extends BaseAdapter {
     }
 
 }
+
+
+/* Important Notes:-
+
+Code method Modified:-
+
+Meth 1:-
+
+
+  Below are the Reference Sections are used for reference
+
+ Ref 1: (Date 17 Dec 17)
+     Here no need to use BroadcastReciver when you use getTotalCostArray() method in 'CartView.java' to get Total cost.
+
+
+Problem???, Explained Below:-
+When we use getTotalCostArray() method and still use BroadcastReciver,it will not update value in Total Cost Textview as you hit the DELETE button
+But when you perform some action like use PLUS,MINUS button or change activity using Intent it will update new Total cost value properly.
+
+Conclusion- When you press DELETE Button
+     ArrayList run before and take previous value for it and calulate Total cost in TextView which is previous one
+and after its execution BroadcastReciver recieve the position and remove the item from ArrayList and notify to Adapter,
+
+Note-But it will work properly when you use db.getCartTotalPrice() method in 'CartView.java' to calculate Total cost throgh Database.
+
+
+ Ref 2: (Date 17 Dec 17)
+    When you call cartlist.remove(i) method before db.cartItemdelete(cartid) method, then only it will update Total cost in TextView properly.
+    Else item will removed from cartview Screen but price is not updated.
+
+---*/

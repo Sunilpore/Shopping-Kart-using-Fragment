@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.sunil.cartadd.Model.CartModel;
 import com.example.sunil.cartadd.Model.ProductModel;
 import com.example.sunil.cartadd.Model.UserModel;
+import com.example.sunil.cartadd.Singleton.PreferenceHelper;
 
 import java.util.ArrayList;
 
@@ -23,10 +24,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public static final String MyprefK = "Prefkey";
     public static final String UserIDK = "UserIDkey";
-    /*public static final String ProductIDK = "ProductIDkey";*/
 
-    SharedPreferences sp;
-    SharedPreferences.Editor ed;
+    PreferenceHelper sp;
+//    SharedPreferences sp;
+//    SharedPreferences.Editor ed;
 
     private static String tag = "myTag";
     Context mContext;
@@ -113,6 +114,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
+        /*-----------------------------------*-*-*-----------------------------------*/
+                      /*Add User,Product,Cart Data */
+
     //Add data for UserModel For signin
     public boolean addUserData(UserModel umd) {
         boolean addCheck = false;
@@ -182,57 +186,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return addCheck;
     }
 
-    public Cursor addButtonStatus(/*int productid, int useridSP*/) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        /*String leftOuterQuery="SELECT * FROM " + TABLE_NAME_CART + " LEFT JOIN " + TABLE_NAME_PROD
-                + " ON " + TABLE_NAME_CART + "." + COL_CART_PRODID + " = " + TABLE_NAME_PROD + "." + COL_PROD_ID
-                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";*/
-
-        String leftOuterQuery = "SELECT * FROM " + TABLE_NAME_PROD + " LEFT JOIN " + TABLE_NAME_CART
-                + " ON " + TABLE_NAME_PROD + "." + COL_PROD_ID + " = " + TABLE_NAME_CART + "." + COL_CART_PRODID;
-//                + " WHERE " + COL_PROD_ID + " =? AND " + COL_CART_USERID + " =?";
-
-        Cursor result = db.rawQuery(leftOuterQuery, null /*new String[]{String.valueOf(productid), String.valueOf(useridSP)}*/);
-
-        //   Log.d(tag, "" +);
-        return result;
-
-    }
-
-    public boolean qtyUpdate(CartModel cmd) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        //Ref 1
-
-        ContentValues value = new ContentValues();
-        value.put(COL_CART_QUANTITY, cmd.getCartquantity());
-        //Log.d(tag, "" + cmd.getCartid());
-        long result = db.update(TABLE_NAME_CART, value, COL_CART_ID + "=?", new String[]{String.valueOf(cmd.cartid)});
-        if (result == -1)
-            return false;
-        else
-            return true;
-
-    }
-
-    ;
-
-    public boolean cartItemdelete(int cartid) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        int result = db.delete(TABLE_NAME_CART, "CART_ID=?", new String[]{String.valueOf(cartid)});
-        if (result > 0)
-            return true;
-        else
-            return false;
-
-    }
-
-    ;
+    /*-----------------------------------*-*-*-----------------------------------*/
+                       /*Verify user credential at Login Page*/
 
     public Cursor getAllUserData(String username, String password) {
 
@@ -256,21 +211,54 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return cur;
     }
 
-    public Cursor getAllProductData() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD, null);
 
-        return cur;
+    /*-----------------------------------*-*-*-----------------------------------*/
+                      /*Update Cart Quantity for individual item*/
+
+    public boolean qtyUpdate(CartModel cmd) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Ref 1
+
+        ContentValues value = new ContentValues();
+        value.put(COL_CART_QUANTITY, cmd.getCartquantity());
+        //Log.d(tag, "" + cmd.getCartid());
+        long result = db.update(TABLE_NAME_CART, value, COL_CART_ID + "=?", new String[]{String.valueOf(cmd.cartid)});
+        if (result == -1)
+            return false;
+        else
+            return true;
 
     }
 
 
+    public boolean cartItemdelete(int cartid) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int result = db.delete(TABLE_NAME_CART, "CART_ID=?", new String[]{String.valueOf(cartid)});
+        if (result > 0)
+            return true;
+        else
+            return false;
+    }
+
+
+                /*-----------------------------------*-*-*-----------------------------------*/
+    /*Get Cart item data to Display on Screen.Used for cart item count on HomePage.Use for Total cost in Cartview  */
+
+
+    //M 3.1, (Date 6 Dec 17) Set ProductList on Adapter without using fragment
+
+
     public Cursor getAllCartData() {
 
-        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
-        int useridSP = sp.getInt(UserIDK, 0);
+        int useridSP = sp.getUserID(UserIDK, 0);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -286,59 +274,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return cur;
     }
 
-    public ArrayList<ProductModel> getProductData() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = getAllProductData();
+    //M 3.2, (Date 6 Dec 17) Set ProductList on Adapter without using fragment
 
-        ArrayList<ProductModel> mlist = new ArrayList<>();
-
-        if (cur != null) {
-            /*while (cur.moveToNext()) {
-
-                String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
-                int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
-
-                mlist.add(new ProductModel(prodname,prodprice));
-            }*/
-
-            cur.moveToFirst();
-            do {
-                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
-                String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
-                int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
-
-                mlist.add(new ProductModel(productid, prodname, prodprice));
-            } while (cur.moveToNext());
-        }
-        return mlist;
-    }
 
     public ArrayList<CartModel> getCartData(/*int useridSP*/) {
 
         Cursor cur = getAllCartData();
 
-        CartModel cmd = new CartModel();
+        //M 4.1, Setter method
         ProductModel pmd;
         ArrayList<CartModel> cartlist = new ArrayList<>();
 
         if (cur != null) {
             while (cur.moveToNext()) {
 
+                int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
                 String cartProdname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
                 int cartProdprize = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
                 int cartItemQty = cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY));
                 int cartid = cur.getInt(cur.getColumnIndex(COL_CART_ID));
                // int productid = cur.getInt(cur.getColumnIndex(COL_CART_PRODID));
-                /*cmd.setCartquantity(cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY)));
 
-                pmd.setProdname(cur.getString(cur.getColumnIndex(COL_PROD_NAME)));
-                cmd.setProdItem(pmd);
-
-                cartlist.add(cmd);*/
+                // M 4.2, Setter method
 
                 //    Log.d(tag, cartProdname);
 
-                pmd = new ProductModel(cartProdname, cartProdprize);
+                pmd = new ProductModel(productid, cartProdname, cartProdprize);
                 cartlist.add(new CartModel(pmd, cartItemQty, cartid));
             }
         }
@@ -346,6 +307,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
+    // CartView.Ref 1
     public int getCartTotalPrice() {
 
         Cursor cur = getAllCartData();
@@ -378,20 +340,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-//              -----------------------------------*-*-*-----------------------------------
-
+              /*-----------------------------------*-*-*-----------------------------------*/
+                                    /*Product List using Fragment*/
 
     public Cursor getAllelecdProductData() {
 
-        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
-        int useridSP = sp.getInt(UserIDK, 0);
+        int useridSP = sp.getUserID(UserIDK, 0);
 
         SQLiteDatabase db = this.getWritableDatabase();
        // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'ELECTRONICS'", null);
 
-
+        //Left JOIN and INNER QUERY use for Disable ADD button in Homepage. It disable ADD Button to those item which already present in CartView
         Cursor cur=db.rawQuery("select * from " + TABLE_NAME_PROD + " LEFT JOIN "
                 + "(select * from " + TABLE_NAME_CART + " WHERE " + COL_CART_USERID + " = " +useridSP + ")"
                 + " ON " + COL_PROD_ID + " = " + COL_CART_PRODID + " WHERE " + COL_PROD_CATEGORY + " = " + "'ELECTRONICS'",null);
@@ -437,10 +400,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllgroceryProductData() {
 
-        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
-        int useridSP = sp.getInt(UserIDK, 0);
+        int useridSP = sp.getUserID(UserIDK, 0);
 
         SQLiteDatabase db = this.getWritableDatabase();
        // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'GROCERY'", null);
@@ -488,10 +452,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllsportsProductData() {
 
-        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
-        ed = sp.edit();
+//        sp = mContext.getSharedPreferences(MyprefK, Context.MODE_PRIVATE);
+//        ed = sp.edit();
+        sp = PreferenceHelper.getmInstance(mContext);
 
-        int useridSP = sp.getInt(UserIDK, 0);
+        int useridSP = sp.getUserID(UserIDK, 0);
 
         SQLiteDatabase db = this.getWritableDatabase();
        // Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD + " WHERE " + COL_PROD_CATEGORY + " =" + "'SPORTS'", null);
@@ -544,15 +509,76 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
 
-/*Note:-
 
-  Below are the Refrence Sections are used for refrence
+
+/* Important Notes:-
+
+Code method Modified:-
+
+
+Meth 3:- (Date 6 Dec 17) Set ProductList on Adapter without using fragment
+
+    //This method used when we were not used Product Category and display all the Products item in one Tab only.
+    //Where we not used even Fragment,TabLayout method
+
+
+    M 3.1, public Cursor getAllProductData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("select * from " + TABLE_NAME_PROD, null);
+
+        return cur;
+    }
+
+
+    M 3.2, public ArrayList<ProductModel> getProductData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = getAllProductData();
+
+        ArrayList<ProductModel> mlist = new ArrayList<>();
+
+        if (cur != null) {
+            while (cur.moveToNext()) {
+
+                String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
+                int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+
+                mlist.add(new ProductModel(prodname,prodprice));
+            }
+
+            cur.moveToFirst();
+                    do {
+                    int productid = cur.getInt(cur.getColumnIndex(COL_PROD_ID));
+                    String prodname = cur.getString(cur.getColumnIndex(COL_PROD_NAME));
+                    int prodprice = cur.getInt(cur.getColumnIndex(COL_PROD_PRICE));
+
+                    mlist.add(new ProductModel(productid, prodname, prodprice));
+                    } while (cur.moveToNext());
+                    }
+                    return mlist;
+                    }
+
+
+Meth 4:- Setter method
+
+      //This is alternative setter method for values which set using CONSTRUCTOR.
+
+       M 4.1, CartModel cmd = new CartModel();
+
+       M 4.2, cmd.setCartquantity(cur.getInt(cur.getColumnIndex(COL_CART_QUANTITY)));
+
+                pmd.setProdname(cur.getString(cur.getColumnIndex(COL_PROD_NAME)));
+                cmd.setProdItem(pmd);
+
+                cartlist.add(cmd);
+
+
+  Below are the Reference Sections are used for reference
 
 Ref 1:
 
 Here parameter, qtyUpdate(parameter)
          Don't use this.Because it creates new instance and take first value if this is used > new CartModel(cartid,qty) in Database;
-            Hence don't create object/instance of Cartmodel
+            Hence don't create object/instance of CartModel
             Either take value from parameter and put it inside value.put(COLMN_NAME,put here); and in update() Query
             If we use above constructor method it will take and update only First value of User
 
