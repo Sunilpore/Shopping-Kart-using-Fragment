@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageButton
+            android:id="@+id/cartcount_base"
+            android:layout_width="45sp"
+            android:layout_height="45sp"
+            android:background="@drawable/cart"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:id="@+id/cartcount_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/countview_shape"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginLeft="18dp" />
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

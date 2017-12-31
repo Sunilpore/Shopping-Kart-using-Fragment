@@ -25,8 +25,8 @@
         android:id="@+id/bt_cartIncrement"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:text="+" />
+        android:background="@drawable/plus"
+        android:layout_alignParentRight="true" />
 
     <TextView
         android:id="@+id/tv_cartQty"
@@ -42,13 +42,13 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_toLeftOf="@id/tv_cartQty"
-        android:text="-" />
+        android:background="@drawable/minus" />
 
     <Button
         android:id="@+id/bt_cartDelete"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:text="d"
+        android:background="@drawable/removecart"
         android:layout_below="@+id/bt_cartIncrement"
         android:layout_toRightOf="@id/tv_cartQty"/>
 

@@ -4,7 +4,8 @@
 
     <item
      android:id="@+id/count_id"
-        android:title="0 Count"
+        android:title="Count"
+        app:actionLayout="@layout/iconset_layout"
         app:showAsAction="always">
     </item>
 
@@ -21,3 +22,10 @@
     </item>
 
 </menu>
+
+<!--
+Date 26 Dec 17
+Here for actionLayout use app.
+Because if we use android it will search default library of Android which is not there.
+We used '@layout/iconset_layout' which is user defined layout.xml file not a default library file.
+-->

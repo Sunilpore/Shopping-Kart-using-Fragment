@@ -15,12 +15,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sunil.cartadd.Adapter.PagerAdapter;
@@ -56,6 +59,11 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
     Context mContext;
     int count;
 
+    ImageView mImgBt;
+    TextView mCount;
+    Toolbar myToolbar;
+    View tview;
+
     TabLayout tablay;
     ViewPager vpager;
 
@@ -64,14 +72,21 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        ActionBar ab=getSupportActionBar();
+        /*ActionBar ab=getSupportActionBar();
         ab.setLogo(R.drawable.tick);
         ab.setDisplayUseLogoEnabled(true);   //This method will enable your logo
-        ab.setDisplayShowHomeEnabled(true);  //This method will enable your home
+        ab.setDisplayShowHomeEnabled(true);  //This method will enable your home*/
+
+
+        myToolbar= (Toolbar) findViewById(R.id.custom_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setLogo(R.drawable.cartlogo);
 
         mContext=this;
 //        adapter=new MyAdapter();
         db=new DatabaseHandler(mContext);
+
+
 
         /*lv= (ListView) findViewById(R.id.home_listview);*/
         cordlay= (CoordinatorLayout) findViewById(R.id.cord_layhome);
@@ -161,7 +176,25 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
         MenuInflater menuInflater=getMenuInflater();
         menuInflater.inflate(R.menu.menu_activity,menu);
         countview=menu.findItem(R.id.count_id);
-        getCount();
+        tview=countview.getActionView();
+
+        if(tview!=null){
+            mImgBt=tview.findViewById(R.id.cartcount_base);
+            mCount=tview.findViewById(R.id.cartcount_notification);
+            getCount();
+        }
+
+        //Don't use inside onOptionsItemSelected(),it will not work
+        mImgBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in=new Intent(HomeActivity.this,CartView.class);
+
+                //in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(in);
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -216,8 +249,10 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
             if(isCartInserted){
 
                 count=getCount();
-                add=String.valueOf(count) + " Items Added";
-                countview.setTitle(add);
+                //add=String.valueOf(count) + " Items Added";
+                add=String.valueOf(count);
+                //countview.setTitle(add);
+                mCount.setText(add);
 
                 Snackbar.make(cordlay,count+" Product added in Cart",Snackbar.LENGTH_LONG).show();
             }
@@ -241,7 +276,8 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
     private int getCount(){
 
         count=db.cartCount(sp.getUserID(UserIDK,0));
-        countview.setTitle(""+count+" Items Added");
+       // countview.setTitle(""+count+" Items Added");
+        mCount.setText(String.valueOf(count));
 
         return count;
     }

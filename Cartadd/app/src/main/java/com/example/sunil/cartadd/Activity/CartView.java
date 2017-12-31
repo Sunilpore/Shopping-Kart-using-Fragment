@@ -109,7 +109,7 @@ public class CartView extends AppCompatActivity implements CartTotalPriceUpdateL
         menuInflater.inflate(R.menu.order_activity,menu);
 
         ActionBar ab=getSupportActionBar();
-        ab.setLogo(R.drawable.tick);
+        ab.setLogo(R.drawable.cartlogo);
         ab.setDisplayUseLogoEnabled(true);   //This method will enable your logo
 
         ab.setDisplayHomeAsUpEnabled(true);
