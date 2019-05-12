@@ -109,7 +109,27 @@ public class HomeActivity extends AppCompatActivity implements /*UpdateListener,
         PagerAdapter pgadapter=new PagerAdapter(this.getSupportFragmentManager(), tablay.getTabCount());
 
         vpager.setAdapter(pgadapter);
+        //vpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablay));
         vpager.setOnPageChangeListener( new TabLayout.TabLayoutOnPageChangeListener(tablay));
+
+
+
+        /*tablay.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                vpager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });*/
 
 
         tablay.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
